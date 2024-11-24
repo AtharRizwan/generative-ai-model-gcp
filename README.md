@@ -1,0 +1,1 @@
+# generative-ai-model-gcp

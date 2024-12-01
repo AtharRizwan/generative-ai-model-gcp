@@ -1,0 +1,4 @@
+diffusers
+torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+dotenv
+transformers

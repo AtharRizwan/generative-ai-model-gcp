@@ -109,33 +109,40 @@
     const generateImage = async () => {
       const textPrompt = document.getElementById("text-input").value;
       const imageContainer = document.getElementById("image-container");
-
+  
       if (!textPrompt) {
         alert("Please enter a description.");
         return;
       }
-
+  
       // Clear previous image
       imageContainer.innerHTML = "";
-
+  
       // Show loading text
       const loadingText = document.createElement("p");
       loadingText.textContent = "Generating image...";
       imageContainer.appendChild(loadingText);
-
+  
       try {
         /*
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        !!!!!!!!!!!!!!Replace `YOUR_API_URL` with the actual endpoint of your deployed model!!!!!!!!!!!!!
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Replace `YOUR_API_URL` with the actual endpoint of your deployed model
         */
         const response = await axios.post("YOUR_API_URL", {
-          prompt: textPrompt
+          instances: [
+            { text: textPrompt }
+          ],
+          parameters: {
+            negative_prompt: "",
+            height: 768,
+            width: 768,
+            num_inference_steps: 25,
+            guidance_scale: 7.5
+          }
         });
-
+  
         // Assuming the API returns the image as a URL in `response.data.image_url`
         const imageUrl = response.data.image_url;
-
+  
         // Display the generated image
         const image = document.createElement("img");
         image.src = imageUrl;
@@ -149,10 +156,10 @@
         imageContainer.appendChild(errorText);
       }
     };
-
+  
     // Listen for button click
     document.getElementById("generate-button").addEventListener("click", generateImage);
-
+  
     // Listen for Enter key press to trigger the same function
     document.getElementById("text-input").addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
@@ -160,5 +167,6 @@
       }
     });
   </script>
+  
 </body>
 </html>

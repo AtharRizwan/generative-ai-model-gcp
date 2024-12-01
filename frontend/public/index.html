@@ -127,7 +127,7 @@
         /*
         Replace `YOUR_API_URL` with the actual endpoint of your deployed model
         */
-        const response = await axios.post("YOUR_API_URL", {
+        const response = await axios.post("``https://us-central1-aiplatform.googleapis.com/v1/projects/{projectId}/locations/us-central1/endpoints/{endpointId}:predict``", {
           instances: [
             { text: textPrompt }
           ],

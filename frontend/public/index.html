@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanvasCraft</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+  <style>
+    /* Body styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f8ff; /* Light blue background */
+    }
+
+    /* h1 styling (Bowlby One font, larger font size) */
+    h1 {
+      font-family: "Bowlby One", sans-serif;
+      font-weight: 400;
+      font-size: 48px;
+      color: #003366; /* Dark Navy */
+      margin-bottom: 10px;
+    }
+
+    /* h2 styling (Shadows Into Light font, smaller and centered) */
+    h3 {
+      font-family: "Shadows Into Light", cursive;
+      font-weight: 400;
+      font-size: 24px;
+      color: #005b96; /* Light Navy Blue */
+      margin-top: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Input container styling */
+    .input-container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    /* Input field styling */
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #005b96;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      background-color: #dfecf9; /* Light blue input field */
+    }
+
+    /* Button styling */
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #003366; /* Dark Navy */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005b96; /* Light Navy on hover */
+    }
+
+    /* Image container styling */
+    .image-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    /* Image styling */
+    img {
+      max-width: 100%;
+      max-height: 500px;
+      border: 1px solid #003366;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>CanvasCraft</h1>
+  <h3>The canvas that turns your words into images</h3>
+  
+  <div class="input-container">
+    <input id="text-input" type="text" placeholder="Enter a description..." />
+    <button id="generate-button">Generate Image</button>
+  </div>
+
+  <div class="image-container" id="image-container">
+    <!-- Image will be displayed here -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Function to handle the image generation process
+    const generateImage = async () => {
+      const textPrompt = document.getElementById("text-input").value;
+      const imageContainer = document.getElementById("image-container");
+  
+      if (!textPrompt) {
+        alert("Please enter a description.");
+        return;
+      }
+  
+      // Clear previous image
+      imageContainer.innerHTML = "";
+  
+      // Show loading text
+      const loadingText = document.createElement("p");
+      loadingText.textContent = "Generating image...";
+      imageContainer.appendChild(loadingText);
+  
+      try {
+        /*
+        Replace `YOUR_API_URL` with the actual endpoint of your deployed model
+        */
+        const response = await axios.post("``https://us-central1-aiplatform.googleapis.com/v1/projects/{projectId}/locations/us-central1/endpoints/{endpointId}:predict``", {
+          instances: [
+            { text: textPrompt }
+          ],
+          parameters: {
+            negative_prompt: "",
+            height: 768,
+            width: 768,
+            num_inference_steps: 25,
+            guidance_scale: 7.5
+          }
+        });
+  
+        // Assuming the API returns the image as a URL in `response.data.image_url`
+        const imageUrl = response.data.image_url;
+  
+        // Display the generated image
+        const image = document.createElement("img");
+        image.src = imageUrl;
+        image.alt = "Generated Image";
+        imageContainer.innerHTML = ""; // Clear loading text
+        imageContainer.appendChild(image);
+      } catch (error) {
+        imageContainer.innerHTML = "";
+        const errorText = document.createElement("p");
+        errorText.textContent = "An error occurred: " + error.message;
+        imageContainer.appendChild(errorText);
+      }
+    };
+  
+    // Listen for button click
+    document.getElementById("generate-button").addEventListener("click", generateImage);
+  
+    // Listen for Enter key press to trigger the same function
+    document.getElementById("text-input").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        generateImage();
+      }
+    });
+  </script>
+  
+</body>
+</html>

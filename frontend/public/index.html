@@ -61,19 +61,25 @@
     }
 
     /* Button styling */
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #003366; /* Dark Navy */
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #003366; /* Dark Navy */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s; /* Smooth transition */
+}
 
-    button:hover {
-      background-color: #005b96; /* Light Navy on hover */
-    }
+button:hover {
+  background-color: #005b96; /* Light Navy on hover */
+}
+
+button:active {
+  background-color: #002244; /* Even darker navy when clicked */
+  transform: scale(0.95); /* Slightly shrink the button on click */
+}
 
     /* Image container styling */
     .image-container {
@@ -96,15 +102,19 @@
   
   <div class="input-container">
     <input id="text-input" type="text" placeholder="Enter a description..." />
-    <button id="generate-button">Generate Image</button>
+    <button id="generate-button" onclick="generateImage()">Generate Image</button>
   </div>
 
   <div class="image-container" id="image-container">
     <!-- Image will be displayed here -->
+     <!-- <img src="https://img.freepik.com/premium-photo/beautiful-glowing-trees-generative-ai-illustration_1023080-5999.jpg?w=2000" alt="Enter text"> -->
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
+
+  import { PROJECT_ID, ENDPOINT_ID, ACCESS_TOKEN } from './credentials.js';
+
     // Function to handle the image generation process
     const generateImage = async () => {
       const textPrompt = document.getElementById("text-input").value;
@@ -127,18 +137,28 @@
         /*
         Replace `YOUR_API_URL` with the actual endpoint of your deployed model
         */
-        const response = await axios.post("``https://us-central1-aiplatform.googleapis.com/v1/projects/{projectId}/locations/us-central1/endpoints/{endpointId}:predict``", {
-          instances: [
-            { text: textPrompt }
-          ],
-          parameters: {
-            negative_prompt: "",
-            height: 768,
-            width: 768,
-            num_inference_steps: 25,
-            guidance_scale: 7.5
-          }
-        });
+        const response = await axios.post(
+          `https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/us-central1/endpoints/${ENDPOINT_ID}:predict`, 
+          {
+    instances: [
+      { text: textPrompt }
+    ],
+    parameters: {
+      negative_prompt: "",
+      height: 768,
+      width: 768,
+      num_inference_steps: 25,
+      guidance_scale: 7.5
+    }
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json"
+    }
+  }
+);
+
   
         // Assuming the API returns the image as a URL in `response.data.image_url`
         const imageUrl = response.data.image_url;
@@ -156,7 +176,8 @@
         imageContainer.appendChild(errorText);
       }
     };
-  
+    
+
     // Listen for button click
     document.getElementById("generate-button").addEventListener("click", generateImage);
   
@@ -166,6 +187,7 @@
         generateImage();
       }
     });
+
   </script>
   
 </body>

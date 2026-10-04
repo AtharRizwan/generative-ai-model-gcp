@@ -1,2 +1,12 @@
 .env
 dataset/
+dataset.zip
+frontend/public/credentials.js
+frontend/.firebase/
+generated_images/
+fine-tuned-stable-diffusion/
+sd21-pixelart-lora/
+vertex-ai-samples/
+__pycache__/
+sample.png
+comparison.png
